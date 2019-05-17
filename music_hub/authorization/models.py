@@ -26,9 +26,18 @@ class UserManager(BaseUserManager):
 class User(AbstractBaseUser, PermissionsMixin):
     """Custom user model that supports using email instead of username"""
     email = models.EmailField(max_length=255, unique=True)
+    name = models.CharField(max_length=255)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
+
+    def has_perm(self, perm, obj=None):
+        if self.is_active and self.is_staff:
+            return True
+        return super().has_perm(perm, obj=obj)
+
+    def has_module_perms(self, app_label):
+        return self.is_staff
