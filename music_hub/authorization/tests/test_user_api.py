@@ -6,7 +6,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from music_hub.music_hub.test_utils import APITestUser
+from music_hub.test_utils import APITestUser
 
 CREATE_USER_URL = reverse('authorization:auth-register')
 

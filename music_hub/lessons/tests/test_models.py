@@ -1,7 +1,7 @@
 from django.urls import reverse
 
-from music_hub.lessons.models import Lessons
-from music_hub.music_hub.test_utils import APITestUser
+from lessons.models import Lessons
+from music_hub.test_utils import APITestUser
 
 
 def create_lesson(user):
