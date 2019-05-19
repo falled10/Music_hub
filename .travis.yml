@@ -1,11 +1,7 @@
+dist: xenial
 language: python
-python:
-  - "3.6"
-
-services:
-  - docker
-
-before_script: sudo -H pip install docker-compose
-
+python: 3.7.2
+install:
+  - pip install -r requirements.txt
 script:
-  - docker-compose run app sh -c "python manage.py test && flake8"
+  - cd music_hub && python manage.py test && flake8
