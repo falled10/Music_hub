@@ -1,12 +1,12 @@
-from django.db import models
 from django.contrib.auth import get_user_model
+from django.db import models
 
 
 class Lessons(models.Model):
     title = models.CharField(max_length=255)
     body = models.TextField()
     owner = models.ForeignKey(get_user_model(), on_delete=models.CASCADE,
-                                 null=True)
+                              null=True)
 
     class Meta:
         db_table = 'lessons'
@@ -14,11 +14,12 @@ class Lessons(models.Model):
     def __str__(self):
         return f'{self.title} - {self.owner.name}'
 
+
 class Likes(models.Model):
-    liker = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, 
-                                related_name='likers')
-    lesson = models.ForeignKey(Lessons, on_delete=models.CASCASE, 
-                                related_name='likes')
+    liker = models.ForeignKey(get_user_model(), on_delete=models.CASCADE,
+                              related_name='likers', null=True)
+    lesson = models.ForeignKey(Lessons, on_delete=models.CASCADE,
+                               related_name='likes', null=True)
 
     def __str__(self):
         return f'{self.liker} like {self.lesson}'
