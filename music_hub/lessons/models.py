@@ -17,7 +17,7 @@ class Lessons(models.Model):
 class Likes(models.Model):
     liker = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, 
                                 related_name='likers')
-    lesson = models.ForeignKey(Lessons, on_delete=models.CASCASE, 
+    lesson = models.ForeignKey(Lessons, on_delete=models.CASCADE, 
                                 related_name='likes')
 
     def __str__(self):

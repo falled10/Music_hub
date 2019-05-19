@@ -1,8 +1,7 @@
+from django.contrib.auth import get_user_model
 from rest_framework.test import APITestCase
 from rest_framework_simplejwt.settings import api_settings
 from rest_framework_simplejwt.tokens import AccessToken
-
-from django.contrib.auth import get_user_model
 
 
 class APITestUser(APITestCase):

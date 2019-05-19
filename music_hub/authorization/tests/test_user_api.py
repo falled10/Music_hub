@@ -1,14 +1,12 @@
 import json
 
-from django.test import TestCase
 from django.contrib.auth import get_user_model
+from django.test import TestCase
 from django.urls import reverse
-
-from rest_framework.test import APIClient
 from rest_framework import status
+from rest_framework.test import APIClient
 
-from music_hub.test_utils import APITestUser
-
+from music_hub.music_hub.test_utils import APITestUser
 
 CREATE_USER_URL = reverse('authorization:auth-register')
 
@@ -65,7 +63,6 @@ class PublicUserApiTests(TestCase):
 
 
 class AuthLoginUserTest(TestCase):
-
     client = APIClient()
 
     def login_a_user(self, email='', password=''):
