@@ -31,7 +31,7 @@ class TestLikeSystem(APITestUser):
                                         args=[self.lesson.id]))
         like_exists = Likes.objects.filter(lesson=self.lesson,
                                            liker=self.user).exists()
-        self.assertEqual(resp.status_code, 201)
+        self.assertEqual(resp.status_code, 204)
         self.assertFalse(like_exists)
 
     def test_error_if_anon_try_to_like(self):

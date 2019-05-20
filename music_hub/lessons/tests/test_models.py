@@ -85,8 +85,6 @@ class LessonModelsTests(APITestUser):
         self.logout()
         resp = self.client.delete(reverse('lessons-detail',
                                           args=[self.lesson.id]))
-        resp = self.client.get(reverse('lessons-detail',
-                                       args=[self.lesson.id]))
 
         self.assertEqual(resp.status_code, 401)
 
@@ -94,7 +92,5 @@ class LessonModelsTests(APITestUser):
         self.user = self.create_and_authorize('another@gmail.com', 'another')
         resp = self.client.delete(reverse('lessons-detail',
                                           args=[self.lesson.id]))
-        resp = self.client.get(reverse('lessons-detail',
-                                       args=[self.lesson.id]))
 
         self.assertEqual(resp.status_code, 403)

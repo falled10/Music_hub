@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from .models import Lessons
-from .permissions import IsOwner
+from .permissions import IsOwnerOrReadOnly
 from .serializers import LessonsSerializer, LikesSerializer
 
 
@@ -13,7 +13,7 @@ class LessonsViewSet(ModelViewSet):
     queryset = Lessons.objects.all()
     permission_classes = [
         permissions.IsAuthenticatedOrReadOnly,
-        IsOwner
+        IsOwnerOrReadOnly
     ]
 
     @action(detail=True, methods=['GET'],
@@ -31,6 +31,8 @@ class LessonsViewSet(ModelViewSet):
         serializer.context['lesson'] = lesson
         serializer.is_valid(raise_exception=True)
         serializer.save()
+        if None in serializer.data.values():
+            return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def perform_create(self, serializer):
