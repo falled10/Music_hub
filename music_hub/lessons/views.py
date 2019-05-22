@@ -11,6 +11,7 @@ from .serializers import LessonsSerializer, LikesSerializer
 class LessonsViewSet(ModelViewSet):
     serializer_class = LessonsSerializer
     queryset = Lessons.objects.all()
+    lookup_field = 'slug'
     permission_classes = [
         permissions.IsAuthenticatedOrReadOnly,
         IsOwnerOrReadOnly
@@ -18,13 +19,13 @@ class LessonsViewSet(ModelViewSet):
 
     @action(detail=True, methods=['GET'],
             permission_classes=[permissions.IsAuthenticated])
-    def likes(self, request, pk=None):
+    def likes(self, request, slug=None):
         lesson = self.get_object()
         serializer = LikesSerializer(lesson.likes.all(), many=True)
         return Response(serializer.data)
 
     @likes.mapping.post
-    def create_likes(self, request, pk=None):
+    def create_likes(self, request, slug=None):
         lesson = self.get_object()
         serializer = LikesSerializer(data=request.data)
         serializer.context['user'] = self.request.user

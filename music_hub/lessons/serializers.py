@@ -5,9 +5,11 @@ from .models import Lessons, Likes
 
 
 class LessonsSerializer(serializers.ModelSerializer):
+    lookup_field = 'slug'
+
     class Meta:
         model = Lessons
-        fields = ('title', 'body', 'owner')
+        fields = ('title', 'body', 'owner', 'slug')
 
 
 class LikesSerializer(serializers.ModelSerializer):
