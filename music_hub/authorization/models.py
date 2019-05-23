@@ -1,6 +1,10 @@
+import uuid
+
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, \
                                         PermissionsMixin
+
+from .tasks import send_verification_email
 
 
 class UserManager(BaseUserManager):
@@ -29,6 +33,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(max_length=255)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+    is_verified = models.BooleanField('verified', default=False)
+    verification_uuid = models.UUIDField('Unique Verification UUID',
+                                         default=uuid.uuid4)
 
     objects = UserManager()
 
@@ -41,3 +48,12 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def has_module_perms(self, app_label):
         return self.is_staff
+
+
+def user_post_save(sender, instance, signal, *args, **kwargs):
+    if not instance.is_verified:
+        # Send verification email
+        send_verification_email.delay(instance.pk)
+
+
+models.signals.post_save.connect(user_post_save, sender=User)

@@ -79,6 +79,8 @@ class AuthLoginUserTest(TestCase):
         )
 
     def test_login_user_with_valid_credentials(self):
+        self.client.get(reverse('authorization:verify',
+                                args=[self.user.verification_uuid]))
         resp = self.login_a_user('test@mail.com', 'testpass123')
 
         self.assertIn('access', resp.data)
@@ -99,3 +101,30 @@ class UserTests(APITestUser):
         resp = self.client.get(reverse('authorization:auth-user'))
         self.assertEqual(self.user.email, resp.data['email'])
         self.assertEqual(resp.status_code, 200)
+
+    def test_get_all_user_successful(self):
+        resp = self.client.get(reverse('authorization:users-list'))
+        self.assertEqual(resp.status_code, 200)
+        resp = self.client.get(reverse('authorization:users-detail',
+                                       args=[self.user.id]))
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.data['email'], self.user.email)
+
+    def test_unsafe_methods_error(self):
+        resp = self.client.post(reverse('authorization:users-list'), {
+            'email': 'test@gmail.com',
+            'name': 'test user',
+            'password': 'testpass123'
+        })
+        self.assertEqual(resp.status_code, 403)
+        resp = self.client.delete(reverse('authorization:users-detail',
+                                          args=[self.user.id]))
+        self.assertEqual(resp.status_code, 403)
+        resp = self.client.put(reverse('authorization:users-detail',
+                                       args=[self.user.id]),
+                               {
+                                   'email': 'test@gmail.com',
+                                   'name': 'somename',
+                                   'password': 'somepass'
+                               })
+        self.assertEqual(resp.status_code, 403)

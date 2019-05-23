@@ -29,7 +29,16 @@ services:
       - ./music_hub:/music_hub
     command: sh -c "python manage.py wait_for_db && python manage.py migrate  &&
       python manage.py runserver 0.0.0.0:8000"
-    env_file: .env
+    environment:
+      DB_HOST: ${DB_HOST}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      EMAIL_HOST: ${EMAIL_HOST}
+      EMAIL_USE_TLS: ${EMAIL_USE_TLS}
+      EMAIL_PORT: ${EMAIL_PORT}
+      EMAIL_HOST_USER: ${EMAIL_HOST_USER}
+      EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD}
     depends_on:
       - db
       - redis
@@ -37,7 +46,16 @@ services:
     build:
       context: .
     command: celery -A music_hub worker -l info
-    env_file: .env
+    environment:
+      DB_HOST: ${DB_HOST}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      EMAIL_HOST: ${EMAIL_HOST}
+      EMAIL_USE_TLS: ${EMAIL_USE_TLS}
+      EMAIL_PORT: ${EMAIL_PORT}
+      EMAIL_HOST_USER: ${EMAIL_HOST_USER}
+      EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD}
     depends_on:
       - db
       - redis
