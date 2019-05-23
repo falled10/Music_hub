@@ -79,6 +79,8 @@ class AuthLoginUserTest(TestCase):
         )
 
     def test_login_user_with_valid_credentials(self):
+        self.client.get(reverse('authorization:verify',
+                                args=[self.user.verification_uuid]))
         resp = self.login_a_user('test@mail.com', 'testpass123')
 
         self.assertIn('access', resp.data)
@@ -103,7 +105,8 @@ class UserTests(APITestUser):
     def test_get_all_user_successful(self):
         resp = self.client.get(reverse('authorization:users-list'))
         self.assertEqual(resp.status_code, 200)
-        resp = self.client.get(reverse('authorization:users-detail', args=[self.user.id]))
+        resp = self.client.get(reverse('authorization:users-detail',
+                                       args=[self.user.id]))
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.data['email'], self.user.email)
 

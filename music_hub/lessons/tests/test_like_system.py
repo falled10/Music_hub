@@ -19,7 +19,7 @@ class TestLikeSystem(APITestUser):
 
     def test_like_create_successful(self):
         resp = self.client.post(reverse('lessons-likes',
-                                        args=[self.lesson.id]))
+                                        args=[self.lesson.slug]))
         self.assertEqual(resp.status_code, 201)
         like_exists = Likes.objects.filter(lesson=self.lesson,
                                            liker=self.user).exists()
@@ -28,7 +28,7 @@ class TestLikeSystem(APITestUser):
     def test_like_deleted_successful_if_post_second_time(self):
         Likes.objects.create(lesson=self.lesson, liker=self.user)
         resp = self.client.post(reverse('lessons-likes',
-                                        args=[self.lesson.id]))
+                                        args=[self.lesson.slug]))
         like_exists = Likes.objects.filter(lesson=self.lesson,
                                            liker=self.user).exists()
         self.assertEqual(resp.status_code, 204)
@@ -37,13 +37,13 @@ class TestLikeSystem(APITestUser):
     def test_error_if_anon_try_to_like(self):
         self.logout()
         resp = self.client.post(reverse('lessons-likes',
-                                        args=[self.lesson.id]))
+                                        args=[self.lesson.slug]))
         self.assertEqual(resp.status_code, 401)
 
     def test_get_all_likes_from_lesson(self):
-        self.client.post(reverse('lessons-likes', args=[self.lesson.id]))
+        self.client.post(reverse('lessons-likes', args=[self.lesson.slug]))
         resp = self.client.get(reverse('lessons-likes',
-                                       args=[self.lesson.id]))
+                                       args=[self.lesson.slug]))
         self.assertEqual(resp.status_code, 200)
         self.assertIn({'liker': self.user.id,
                        'lesson': self.lesson.id}, resp.data)
@@ -51,5 +51,5 @@ class TestLikeSystem(APITestUser):
     def test_get_error_if_anon_user_get_likes(self):
         self.logout()
         resp = self.client.get(reverse('lessons-likes',
-                                       args=[self.lesson.id]))
+                                       args=[self.lesson.slug]))
         self.assertEqual(resp.status_code, 401)

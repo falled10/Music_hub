@@ -48,7 +48,7 @@ class LessonModelsTests(APITestUser):
             'body': 'Updated body'
         }
         resp = self.client.put(reverse('lessons-detail',
-                                       args=[self.lesson.id]),
+                                       args=[self.lesson.slug]),
                                lesson_new_data)
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.data['title'], lesson_new_data['title'])
@@ -69,28 +69,28 @@ class LessonModelsTests(APITestUser):
             'title': 'Updated title'
         }
         resp = self.client.put(reverse('lessons-detail',
-                                       args=[self.lesson.id]),
+                                       args=[self.lesson.slug]),
                                lesson_new_data)
         self.assertEqual(resp.status_code, 403)
 
     def test_lesson_delete_success(self):
         resp = self.client.delete(reverse('lessons-detail',
-                                          args=[self.lesson.id]))
+                                          args=[self.lesson.slug]))
         resp = self.client.get(reverse('lessons-detail',
-                                       args=[self.lesson.id]))
+                                       args=[self.lesson.slug]))
 
         self.assertEqual(resp.status_code, 404)
 
     def test_anon_user_delete_error(self):
         self.logout()
         resp = self.client.delete(reverse('lessons-detail',
-                                          args=[self.lesson.id]))
+                                          args=[self.lesson.slug]))
 
         self.assertEqual(resp.status_code, 401)
 
     def test_other_user_delete_error(self):
         self.user = self.create_and_authorize('another@gmail.com', 'another')
         resp = self.client.delete(reverse('lessons-detail',
-                                          args=[self.lesson.id]))
+                                          args=[self.lesson.slug]))
 
         self.assertEqual(resp.status_code, 403)

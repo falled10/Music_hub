@@ -7,7 +7,6 @@ from django.contrib.auth import get_user_model
 
 @shared_task
 def send_verification_email(user_id):
-    UserModel = get_user_model()
     try:
         user = get_user_model().objects.filter(id=user_id)
         user = user.first()
@@ -18,4 +17,5 @@ def send_verification_email(user_id):
         mail.attach_alternative(mail_message, 'text/html')
         mail.send()
     except get_user_model().DoesNotExist:
-        logging.warning('Tried to send verification email to non-existing user')
+        message = 'Tried to send verification email to non-existing user'
+        logging.warning(message)
