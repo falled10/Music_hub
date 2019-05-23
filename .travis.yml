@@ -8,4 +8,4 @@ services:
 before_script: sudo -H pip install docker-compose
 
 script:
-  - docker-compose run app sh -c "python manage.py test && flake8"
+  - docker-compose -f docker-compose-travis.yml run app sh -c "python manage.py test && flake8"
