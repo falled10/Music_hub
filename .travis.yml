@@ -8,5 +8,6 @@ services:
 before_script: sudo -H pip install docker-compose
 
 script:
-  - docker-compose -f docker-compose-travis.yml run app coverage run manage.py test && coverage report
+  - docker-compose -f docker-compose-travis.yml run app coverage run manage.py test
+  - docker-compose -f docker-compose-travis.yml run app coverage report
   - docker-compose -f docker-compose-travis.yml run app flake8
