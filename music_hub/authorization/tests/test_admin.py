@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 from django.contrib.auth import get_user_model
 from django.test import TestCase, Client
 from django.urls import reverse
@@ -5,7 +7,8 @@ from django.urls import reverse
 
 class AdminTests(TestCase):
 
-    def setUp(self):
+    @patch('authorization.tasks.send_verification_email.delay')
+    def setUp(self, delay):
         self.client = Client()
         self.admin_user = get_user_model().objects.create_superuser(
             'admin@mail.com',

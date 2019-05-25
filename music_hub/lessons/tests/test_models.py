@@ -23,7 +23,7 @@ class LessonModelsTests(APITestUser):
         }
         resp = self.client.post(reverse('lessons-list'), lesson_data)
         self.assertEqual(resp.status_code, 201)
-        self.assertEqual(resp.data['owner'], self.user.id)
+        self.assertEqual(resp.data['owner']['id'], self.user.id)
 
     def test_lesson_not_create_with_anonymous_user(self):
         self.logout()

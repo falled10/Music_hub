@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'lessons',
     'user_requests',
     'celery',
+    'subscribers',
 ]
 
 MIDDLEWARE = [
@@ -144,14 +145,16 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 AUTH_USER_MODEL = 'authorization.User'
 
 CORS_ORIGIN_WHITELIST = (
     'http://localhost:3000',
 )
 
-CELERY_BROKER_URL = 'redis://redis:6379'
-CELERY_RESULT_BACKEND = 'redis://redis:6379'
+CELERY_BROKER_URL = os.environ.get('BROKER_URL')
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'

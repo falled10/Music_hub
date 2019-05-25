@@ -3,6 +3,8 @@ from rest_framework import generics, permissions, viewsets, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.mixins import UpdateModelMixin
+from rest_framework.parsers import FileUploadParser
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from .permissions import OnlySafeMethods
@@ -27,9 +29,13 @@ class VerifyView(APIView):
 class VerifiedTokenObtainPairView(TokenObtainPairView):
 
     def post(self, request, *args, **kwargs):
-        user = get_user_model().objects.filter(email=request.data['email'])
-        if user and user.first().is_verified:
-            return super().post(request, *args, **kwargs)
+        try:
+            user = get_user_model().objects.get(email=request.data['email'])
+            if user.is_verified:
+                return super().post(request, *args, **kwargs)
+        except Exception:
+            return Response('Invalid credentials',
+                            status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_401_UNAUTHORIZED)
 
 
@@ -45,9 +51,14 @@ class RegisterView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
 
 
-class UserAPIView(generics.RetrieveAPIView):
+class UserAPIView(UpdateModelMixin, generics.RetrieveAPIView):
+    parsers_classes = (FileUploadParser, )
+    queryset = get_user_model().objects.all()
     permission_classes = [IsAuthenticated, ]
     serializer_class = UserSerializer
 
     def get_object(self):
         return self.request.user
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)

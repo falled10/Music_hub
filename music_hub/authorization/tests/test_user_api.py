@@ -1,4 +1,5 @@
 import json
+from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
 from django.test import TestCase
@@ -11,7 +12,8 @@ from music_hub.test_utils import APITestUser
 CREATE_USER_URL = reverse('authorization:auth-register')
 
 
-def create_user(**kwargs):
+@patch('authorization.tasks.send_verification_email.delay')
+def create_user(delay, **kwargs):
     return get_user_model().objects.create_user(**kwargs)
 
 
@@ -20,7 +22,8 @@ class PublicUserApiTests(TestCase):
     def setUp(self):
         self.client = APIClient()
 
-    def test_create_valid_user_success(self):
+    @patch('authorization.tasks.send_verification_email.delay')
+    def test_create_valid_user_success(self, delay):
         resp = self.client.post(CREATE_USER_URL, data=json.dumps({
             'email': 'test@mail.com',
             'password': 'testpass123',
@@ -67,12 +70,13 @@ class AuthLoginUserTest(TestCase):
 
     def login_a_user(self, email='', password=''):
         url = reverse('authorization:auth-login')
-        return self.client.post(url, data=json.dumps({
+        return self.client.post(url, {
             'email': email,
             'password': password
-        }), content_type='application/json')
+        })
 
-    def setUp(self):
+    @patch('authorization.tasks.send_verification_email.delay')
+    def setUp(self, delay):
         self.user = get_user_model().objects.create_superuser(
             email="test@mail.com",
             password="testpass123",
@@ -86,9 +90,10 @@ class AuthLoginUserTest(TestCase):
         self.assertIn('access', resp.data)
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
 
-        resp = self.login_a_user('anonymous', 'pass')
+    def test_login_user_with_invalid_credentials(self):
+        resp = self.login_a_user(email='anonymous@mail.com', password='pass')
 
-        self.assertEqual(resp.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
 
 
 class UserTests(APITestUser):

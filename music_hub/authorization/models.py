@@ -36,6 +36,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_verified = models.BooleanField('verified', default=False)
     verification_uuid = models.UUIDField('Unique Verification UUID',
                                          default=uuid.uuid4)
+    image = models.ImageField(upload_to='profile_pics', blank=True, null=True)
 
     objects = UserManager()
 
@@ -48,6 +49,9 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def has_module_perms(self, app_label):
         return self.is_staff
+
+    def __str__(self):
+        return f'{self.email} user'
 
 
 def user_post_save(sender, instance, signal, *args, **kwargs):
