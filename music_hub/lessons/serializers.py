@@ -18,6 +18,10 @@ class LikesSerializer(serializers.ModelSerializer):
         return super().validate(attrs)
 
     def create(self, validated_data):
+        """
+        If like with user and lesson already exists then delete like,
+        else create like
+        """
         lesson = validated_data['lesson']
         user = validated_data['liker']
         like = Likes.objects.filter(liker=user, lesson=lesson)
@@ -36,4 +40,4 @@ class LessonsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Lessons
-        fields = ('title', 'body', 'owner', 'slug', 'likes')
+        fields = ('id', 'title', 'body', 'owner', 'slug', 'likes')

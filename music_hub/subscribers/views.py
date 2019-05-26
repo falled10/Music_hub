@@ -11,6 +11,19 @@ from .serializers import CreateSubscribeSerializer, GetSubscribersSerializer
 
 
 class SubscriberViewSet(ListModelMixin, ViewSet):
+    """
+    list:
+    Return all user`s subscribers
+
+    subscribe:
+    If user try to subscribe to himself, then return status 400
+    Create subscribers row with user id whom url and active user from request
+
+    unsubscribe:
+    Try to get subscriber row with user id from url
+    If this row does not exist, return status 400
+    Else, delete the row
+    """
     permission_classes = [permissions.IsAuthenticated]
 
     def list(self, request, *args, **kwargs):
