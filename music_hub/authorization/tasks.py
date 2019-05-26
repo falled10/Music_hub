@@ -7,6 +7,10 @@ from django.contrib.auth import get_user_model
 
 @shared_task
 def send_verification_email(user_id):
+    """
+    Try to get user by id,
+    then send email to this user`s email with verification link
+    """
     try:
         user = get_user_model().objects.filter(id=user_id)
         user = user.first()

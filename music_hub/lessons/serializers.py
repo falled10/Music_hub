@@ -1,10 +1,13 @@
 from django.db import transaction
 from rest_framework import serializers
 
+from authorization.serializers import UserSerializer
 from .models import Lessons, Likes
 
 
 class LikesSerializer(serializers.ModelSerializer):
+    liker = UserSerializer(read_only=True)
+
     class Meta:
         model = Likes
         fields = ('liker', 'lesson')
@@ -15,6 +18,10 @@ class LikesSerializer(serializers.ModelSerializer):
         return super().validate(attrs)
 
     def create(self, validated_data):
+        """
+        If like with user and lesson already exists then delete like,
+        else create like
+        """
         lesson = validated_data['lesson']
         user = validated_data['liker']
         like = Likes.objects.filter(liker=user, lesson=lesson)
@@ -26,13 +33,11 @@ class LikesSerializer(serializers.ModelSerializer):
 
 
 class LessonsSerializer(serializers.ModelSerializer):
-    likes = serializers.SerializerMethodField()
+    likes = LikesSerializer(many=True, read_only=True)
+    owner = UserSerializer(read_only=True)
+
     lookup_field = 'slug'
 
     class Meta:
         model = Lessons
-        fields = ('title', 'body', 'owner', 'slug', 'likes')
-
-    def get_likes(self, obj):
-        serializer = LikesSerializer(obj.likes, many=True, read_only=True)
-        return serializer.data
+        fields = ('id', 'title', 'body', 'owner', 'slug', 'likes')

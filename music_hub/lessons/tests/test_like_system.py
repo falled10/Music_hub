@@ -2,6 +2,7 @@ from django.urls import reverse
 
 from lessons.models import Lessons, Likes
 from music_hub.test_utils import APITestUser
+from lessons.serializers import LessonsSerializer
 
 
 def create_lesson(user):
@@ -45,8 +46,8 @@ class TestLikeSystem(APITestUser):
         resp = self.client.get(reverse('lessons-likes',
                                        args=[self.lesson.slug]))
         self.assertEqual(resp.status_code, 200)
-        self.assertIn({'liker': self.user.id,
-                       'lesson': self.lesson.id}, resp.data)
+        expect = LessonsSerializer(self.lesson).data['likes']
+        self.assertEqual(expect, resp.data)
 
     def test_get_error_if_anon_user_get_likes(self):
         self.logout()

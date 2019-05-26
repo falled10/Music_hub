@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 from django.contrib.auth import get_user_model
 from rest_framework.test import APITestCase
 from rest_framework_simplejwt.settings import api_settings
@@ -6,7 +8,8 @@ from rest_framework_simplejwt.tokens import AccessToken
 
 class APITestUser(APITestCase):
 
-    def create_user(self, email, password):
+    @patch('authorization.tasks.send_verification_email.delay')
+    def create_user(self, email, password, delay):
         user = get_user_model().objects.create_user(email, password)
         user.is_active = True
         user.save()

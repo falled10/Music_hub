@@ -1,10 +1,13 @@
+from unittest.mock import patch
+
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 
 
 class ModelTests(TestCase):
 
-    def test_create_user_with_email_successful(self):
+    @patch('authorization.tasks.send_verification_email.delay')
+    def test_create_user_with_email_successful(self, delay):
         email = 'test@mail.com'
         password = 'testpass123'
         user = get_user_model().objects.create_user(
@@ -15,7 +18,8 @@ class ModelTests(TestCase):
         self.assertEqual(user.email, email)
         self.assertTrue(user.check_password(password))
 
-    def test_new_user_email_normalized(self):
+    @patch('authorization.tasks.send_verification_email.delay')
+    def test_new_user_email_normalized(self, delay):
         email = 'test@MAIL.COM'
         user = get_user_model().objects.create_user(email, 'testpass123')
         self.assertEqual(user.email, email.lower())
@@ -24,7 +28,8 @@ class ModelTests(TestCase):
         with self.assertRaises(ValueError):
             get_user_model().objects.create_user(None, 'testpass123')
 
-    def test_create_new_superuser(self):
+    @patch('authorization.tasks.send_verification_email.delay')
+    def test_create_new_superuser(self, delay):
         user = get_user_model().objects.create_superuser(
             'super@mail.com',
             'testpass123'
