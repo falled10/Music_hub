@@ -10,7 +10,6 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from .permissions import OnlySafeMethods
 from .serializers import RegisterSerializer, UserSerializer
-from .pagination import UsersPagination
 
 
 class VerifyView(APIView):
@@ -59,7 +58,6 @@ class UserViewSets(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated,
                           OnlySafeMethods]
-    pagination_class = UsersPagination
     filter_backends = (DjangoFilterBackend,)
     filterset_fields = ('name', 'email')
 
